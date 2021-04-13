@@ -1,0 +1,60 @@
+/**************************************************************
+@filename: tasks.json
+@author: Haisong Weng
+@version: 1.0
+@date: 2021年4月13日
+@description: 
+    实现任务自动化完成cmake编译以及程序执行
+@others: 
+    1. ctrl + shift + B
+    2. 已经手动设置 alt + B 为执行exe文件
+@functionlist: 
+    1. g++ build active file
+    2. run
+**************************************************************/
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "g++ build active file",
+            "type": "shell",
+            "command": "D:/app/CodeBlocks/MinGW/bin/g++.exe", // NOTE: g++ 路径
+            "args": [ // g++ 参数，g++.exe -g main.cpp -o main.exe -fexec-charset=GBK   
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-fexec-charset=GBK" // 避免中文乱码
+            ],
+            "options": {
+                "cwd": "D:/app/CodeBlocks/MinGW/bin" // NOTE: 这里是MinGW/bin 的路径
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+         },
+
+        {
+            "label": "run",
+            "type": "process", // 执行 exe 使用 process 类型 
+            "command": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": "$msCompile",
+            "dependsOn": [
+                "g++ build active file" // run 之前先编译，即依赖任务 g++ build active file
+            ]
+        },
+    ]
+}

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>vscode-Cpp-configure</title>
+        <style>
+</style>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        
+        <script src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <!-- title: vscode-Cpp-configure -->
+<h1 id="center-vscode-cc-配置-center"><center> vscode C/C++ 配置 </center></h1>
+<ul>
+<li><a href="#center-vscode-cc-%E9%85%8D%E7%BD%AE-center"><center> vscode C/C++ 配置 </center></a>
+<ul>
+<li><a href="#%E4%BA%8B%E5%85%88%E5%87%86%E5%A4%87">事先准备</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE-tasksjson">配置 <code>tasks.json</code></a>
+<ul>
+<li><a href="#tasksjson-%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84">tasks.json 的基本结构</a></li>
+<li><a href="#task1-g-build-active-file">task1: &quot;g++ build active file&quot;</a></li>
+<li><a href="#task2-run">task2: &quot;run&quot;</a></li>
+</ul>
+</li>
+<li><a href="#%E9%85%8D%E7%BD%AE-lauchjson">配置 <code>lauch.json</code></a></li>
+<li><a href="#%E5%AE%8C%E6%95%B4%E9%85%8D%E7%BD%AE">完整配置</a>
+<ul>
+<li><a href="#%E5%AE%8C%E6%95%B4%E7%9A%84-tasksjson">完整的 <code>tasks.json</code></a></li>
+<li><a href="#%E5%AE%8C%E6%95%B4%E7%9A%84-launchjson">完整的 <code>launch.json</code></a></li>
+</ul>
+</li>
+<li><a href="#%E9%A2%84%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F%E5%8F%8A%E5%85%B6%E8%A7%A3%E9%87%8A">预定义变量及其解释</a></li>
+<li><a href="#%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84">文件结构</a></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>在 VScode 中配置 C/C++ 编译环境，以下内容只适合的单文件编译，多文件编译需要根据实际情况修改 g++ 编译指令，详见 <a href="https://www.jianshu.com/p/ef84efb29c02%E3%80%82">https://www.jianshu.com/p/ef84efb29c02。</a></p>
+<p><em>TIP</em>：多文件工程推荐使用<code>cmake</code>，单文件编译还可以使用插件 <code>code runer</code> (注意修改在终端运行，才能支持输入避免中乱码)。</p>
+</blockquote>
+<h2 id="事先准备">事先准备</h2>
+<ol>
+<li>安装 <code>MinGW</code> 编译器和 <code>VScode</code></li>
+<li>在<code>vscode extensions</code>中查找并安装插件 <code>C/C++</code> 和 <code>C++ Intellisense</code></li>
+<li>新建文件夹（这里是<code>CPP-CONFIGURE-DEMO</code>），<code>VScode</code> 打开此文件夹作为工作区</li>
+<li>新建文件 <code>main.cpp</code>，写些简单的代码如 &quot;hello world!&quot;</li>
+</ol>
+<h2 id="配置-tasksjson">配置 <code>tasks.json</code></h2>
+<p>本质上还是调用 <code>g++</code> 对文件进行编译的，使用 <code>tasks.json</code> 可以简化（自动化）完成这个任务。</p>
+<h3 id="tasksjson-的基本结构">tasks.json 的基本结构</h3>
+<p>使用快捷键 <code>shift</code> + <code>ctrl</code> + <code>B</code> 可以执行任务。</p>
+<pre><code class="language-json"><div>{
+    <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;2.0.0&quot;</span>,
+    <span class="hljs-attr">&quot;tasks&quot;</span>: [
+        {
+            <span class="hljs-comment">// task 1</span>
+        },
+
+        {
+            <span class="hljs-comment">// task 2</span>
+        },
+        <span class="hljs-comment">// and so on</span>
+    ],
+}
+</div></code></pre>
+<h3 id="task1-g-build-active-file">task1: &quot;g++ build active file&quot;</h3>
+<p>编译当前文件</p>
+<pre><code class="language-json"><div>{
+   <span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;g++ build active file&quot;</span>,
+   <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;shell&quot;</span>,
+   <span class="hljs-attr">&quot;command&quot;</span>: <span class="hljs-string">&quot;D:/app/CodeBlocks/MinGW/bin/g++.exe&quot;</span>, <span class="hljs-comment">// <span class="hljs-doctag">NOTE:</span> g++ 路径</span>
+   <span class="hljs-attr">&quot;args&quot;</span>: [ <span class="hljs-comment">// g++ 参数，g++.exe -g main.cpp -o main.exe -fexec-charset=GBK   </span>
+       <span class="hljs-string">&quot;-g&quot;</span>,
+       <span class="hljs-string">&quot;${file}&quot;</span>,
+       <span class="hljs-string">&quot;-o&quot;</span>,
+       <span class="hljs-string">&quot;${fileDirname}\\${fileBasenameNoExtension}.exe&quot;</span>,
+       <span class="hljs-string">&quot;-fexec-charset=GBK&quot;</span> <span class="hljs-comment">// 避免中文乱码</span>
+   ],
+   <span class="hljs-attr">&quot;options&quot;</span>: {
+       <span class="hljs-attr">&quot;cwd&quot;</span>: <span class="hljs-string">&quot;D:/app/CodeBlocks/MinGW/bin&quot;</span> <span class="hljs-comment">// <span class="hljs-doctag">NOTE:</span> 这里是MinGW/bin 的路径</span>
+   },
+   <span class="hljs-attr">&quot;problemMatcher&quot;</span>: [
+       <span class="hljs-string">&quot;$gcc&quot;</span>
+   ],
+   <span class="hljs-attr">&quot;group&quot;</span>: <span class="hljs-string">&quot;build&quot;</span>
+},
+</div></code></pre>
+<h3 id="task2-run">task2: &quot;run&quot;</h3>
+<p>运行可执行文件</p>
+<pre><code class="language-json"><div>{
+   <span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;run&quot;</span>,
+   <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;process&quot;</span>, <span class="hljs-comment">// 执行 exe 使用 process 类型 </span>
+   <span class="hljs-attr">&quot;command&quot;</span>: <span class="hljs-string">&quot;${fileDirname}\\${fileBasenameNoExtension}.exe&quot;</span>,
+   <span class="hljs-attr">&quot;group&quot;</span>: <span class="hljs-string">&quot;build&quot;</span>,
+   <span class="hljs-attr">&quot;presentation&quot;</span>: {
+       <span class="hljs-attr">&quot;echo&quot;</span>: <span class="hljs-literal">true</span>,
+       <span class="hljs-attr">&quot;reveal&quot;</span>: <span class="hljs-string">&quot;always&quot;</span>,
+       <span class="hljs-attr">&quot;focus&quot;</span>: <span class="hljs-literal">false</span>,
+       <span class="hljs-attr">&quot;panel&quot;</span>: <span class="hljs-string">&quot;shared&quot;</span>,
+       <span class="hljs-attr">&quot;showReuseMessage&quot;</span>: <span class="hljs-literal">true</span>,
+       <span class="hljs-attr">&quot;clear&quot;</span>: <span class="hljs-literal">false</span>
+   },
+   <span class="hljs-attr">&quot;options&quot;</span>: {
+       <span class="hljs-attr">&quot;cwd&quot;</span>: <span class="hljs-string">&quot;${fileDirname}&quot;</span>
+   },
+   <span class="hljs-attr">&quot;problemMatcher&quot;</span>: <span class="hljs-string">&quot;$msCompile&quot;</span>,
+   <span class="hljs-attr">&quot;dependsOn&quot;</span>: [
+       <span class="hljs-string">&quot;g++ build active file&quot;</span> <span class="hljs-comment">// run 之前先编译，即依赖任务 g++ build active file</span>
+   ]
+},
+</div></code></pre>
+<h2 id="配置-lauchjson">配置 <code>lauch.json</code></h2>
+<p><code>VScode</code> 通过<code>.vscode</code>目录下的<code>launch.json</code>实现对多个平台多种语言的调试支持。如果是第一次，一般点击左侧的 <code>Run and Debug</code> 会提示创建 <code>launch.json</code> 并自动生成代码（也会对应生成所需要的<code>tasks.json</code>），为了灵活推荐自己新建哈。</p>
+<p>一般选择的是 <code>gdb</code> 调试，下面的代码其实和 <code>VScode</code> 生成的代码是大致相同的，<code>preLaunchTask</code> 是指启动前先执行的任务，此项需要根据<code>tasks.json</code>来设置，这里为了调试必须先进行<strong>编译</strong>的意思。</p>
+<pre><code class="language-json"><div>{
+    <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;0.2.0&quot;</span>,
+    <span class="hljs-attr">&quot;configurations&quot;</span>: [
+        {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;(gdb) Launch&quot;</span>,
+            <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;cppdbg&quot;</span>,
+            <span class="hljs-attr">&quot;request&quot;</span>: <span class="hljs-string">&quot;launch&quot;</span>,
+            <span class="hljs-attr">&quot;program&quot;</span>: <span class="hljs-string">&quot;${fileDirname}\\${fileBasenameNoExtension}.exe&quot;</span>, <span class="hljs-comment">// <span class="hljs-doctag">NOTE:</span>可执行程序路径</span>
+            <span class="hljs-attr">&quot;args&quot;</span>: [],
+            <span class="hljs-attr">&quot;stopAtEntry&quot;</span>: <span class="hljs-literal">false</span>,
+            <span class="hljs-attr">&quot;cwd&quot;</span>: <span class="hljs-string">&quot;${workspaceFolder}&quot;</span>,
+            <span class="hljs-attr">&quot;environment&quot;</span>: [],
+            <span class="hljs-attr">&quot;externalConsole&quot;</span>: <span class="hljs-literal">false</span>,
+            <span class="hljs-attr">&quot;MIMode&quot;</span>: <span class="hljs-string">&quot;gdb&quot;</span>,
+            <span class="hljs-attr">&quot;miDebuggerPath&quot;</span>: <span class="hljs-string">&quot;D:\\app\\CodeBlocks\\MinGW\\bin\\gdb.exe&quot;</span>, <span class="hljs-comment">// <span class="hljs-doctag">NOTE:</span> gdb.exe 的路径</span>
+            <span class="hljs-attr">&quot;setupCommands&quot;</span>: [
+                {
+                    <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;为 gdb 启用整齐打印&quot;</span>,
+                    <span class="hljs-attr">&quot;text&quot;</span>: <span class="hljs-string">&quot;-enable-pretty-printing&quot;</span>,
+                    <span class="hljs-attr">&quot;ignoreFailures&quot;</span>: <span class="hljs-literal">true</span>
+                }
+            ],
+            <span class="hljs-attr">&quot;preLaunchTask&quot;</span>: <span class="hljs-string">&quot;g++ build active file&quot;</span> <span class="hljs-comment">// tasks.json 的任务</span>
+        }
+    ]
+}
+</div></code></pre>
+<h2 id="完整配置">完整配置</h2>
+<h3 id="完整的-tasksjson">完整的 <code>tasks.json</code></h3>
+<pre><code class="language-json"><div>{
+    <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;2.0.0&quot;</span>,
+    <span class="hljs-attr">&quot;tasks&quot;</span>: [
+        {
+            <span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;g++ build active file&quot;</span>,
+            <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;shell&quot;</span>,
+            <span class="hljs-attr">&quot;command&quot;</span>: <span class="hljs-string">&quot;D:/app/CodeBlocks/MinGW/bin/g++.exe&quot;</span>, <span class="hljs-comment">// <span class="hljs-doctag">NOTE:</span> g++ 路径</span>
+            <span class="hljs-attr">&quot;args&quot;</span>: [ <span class="hljs-comment">// g++ 参数，g++.exe -g main.cpp -o main.exe -fexec-charset=GBK   </span>
+                <span class="hljs-string">&quot;-g&quot;</span>,
+                <span class="hljs-string">&quot;${file}&quot;</span>,
+                <span class="hljs-string">&quot;-o&quot;</span>,
+                <span class="hljs-string">&quot;${fileDirname}\\${fileBasenameNoExtension}.exe&quot;</span>,
+                <span class="hljs-string">&quot;-fexec-charset=GBK&quot;</span> <span class="hljs-comment">// 避免中文乱码</span>
+            ],
+            <span class="hljs-attr">&quot;options&quot;</span>: {
+                <span class="hljs-attr">&quot;cwd&quot;</span>: <span class="hljs-string">&quot;D:/app/CodeBlocks/MinGW/bin&quot;</span> <span class="hljs-comment">// <span class="hljs-doctag">NOTE:</span> 这里是MinGW/bin 的路径</span>
+            },
+            <span class="hljs-attr">&quot;problemMatcher&quot;</span>: [
+                <span class="hljs-string">&quot;$gcc&quot;</span>
+            ],
+            <span class="hljs-attr">&quot;group&quot;</span>: <span class="hljs-string">&quot;build&quot;</span>
+         },
+
+        {
+            <span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;run&quot;</span>,
+            <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;process&quot;</span>, <span class="hljs-comment">// 执行 exe 使用 process 类型 </span>
+            <span class="hljs-attr">&quot;command&quot;</span>: <span class="hljs-string">&quot;${fileDirname}\\${fileBasenameNoExtension}.exe&quot;</span>,
+            <span class="hljs-attr">&quot;group&quot;</span>: <span class="hljs-string">&quot;build&quot;</span>,
+            <span class="hljs-attr">&quot;presentation&quot;</span>: {
+                <span class="hljs-attr">&quot;echo&quot;</span>: <span class="hljs-literal">true</span>,
+                <span class="hljs-attr">&quot;reveal&quot;</span>: <span class="hljs-string">&quot;always&quot;</span>,
+                <span class="hljs-attr">&quot;focus&quot;</span>: <span class="hljs-literal">false</span>,
+                <span class="hljs-attr">&quot;panel&quot;</span>: <span class="hljs-string">&quot;shared&quot;</span>,
+                <span class="hljs-attr">&quot;showReuseMessage&quot;</span>: <span class="hljs-literal">true</span>,
+                <span class="hljs-attr">&quot;clear&quot;</span>: <span class="hljs-literal">false</span>
+            },
+            <span class="hljs-attr">&quot;options&quot;</span>: {
+                <span class="hljs-attr">&quot;cwd&quot;</span>: <span class="hljs-string">&quot;${fileDirname}&quot;</span>
+            },
+            <span class="hljs-attr">&quot;problemMatcher&quot;</span>: <span class="hljs-string">&quot;$msCompile&quot;</span>,
+            <span class="hljs-attr">&quot;dependsOn&quot;</span>: [
+                <span class="hljs-string">&quot;g++ build active file&quot;</span> <span class="hljs-comment">// run 之前先编译，即依赖任务 g++ build active file</span>
+            ]
+        },
+    ]
+}
+</div></code></pre>
+<h3 id="完整的-launchjson">完整的 <code>launch.json</code></h3>
+<pre><code class="language-json"><div>{
+    <span class="hljs-comment">// Use IntelliSense to learn about possible attributes.</span>
+    <span class="hljs-comment">// Hover to view descriptions of existing attributes.</span>
+    <span class="hljs-comment">// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387</span>
+    <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;0.2.0&quot;</span>,
+    <span class="hljs-attr">&quot;configurations&quot;</span>: [
+        {
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;(gdb) Launch&quot;</span>,
+            <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;cppdbg&quot;</span>,
+            <span class="hljs-attr">&quot;request&quot;</span>: <span class="hljs-string">&quot;launch&quot;</span>,
+            <span class="hljs-attr">&quot;program&quot;</span>: <span class="hljs-string">&quot;${fileDirname}\\${fileBasenameNoExtension}.exe&quot;</span>, <span class="hljs-comment">// <span class="hljs-doctag">NOTE:</span>可执行程序路径</span>
+            <span class="hljs-attr">&quot;args&quot;</span>: [],
+            <span class="hljs-attr">&quot;stopAtEntry&quot;</span>: <span class="hljs-literal">false</span>,
+            <span class="hljs-attr">&quot;cwd&quot;</span>: <span class="hljs-string">&quot;${workspaceFolder}&quot;</span>,
+            <span class="hljs-attr">&quot;environment&quot;</span>: [],
+            <span class="hljs-attr">&quot;externalConsole&quot;</span>: <span class="hljs-literal">false</span>,
+            <span class="hljs-attr">&quot;MIMode&quot;</span>: <span class="hljs-string">&quot;gdb&quot;</span>,
+            <span class="hljs-attr">&quot;miDebuggerPath&quot;</span>: <span class="hljs-string">&quot;D:\\app\\CodeBlocks\\MinGW\\bin\\gdb.exe&quot;</span>, <span class="hljs-comment">// <span class="hljs-doctag">NOTE:</span> gdb.exe 的路径</span>
+            <span class="hljs-attr">&quot;setupCommands&quot;</span>: [
+                {
+                    <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;为 gdb 启用整齐打印&quot;</span>,
+                    <span class="hljs-attr">&quot;text&quot;</span>: <span class="hljs-string">&quot;-enable-pretty-printing&quot;</span>,
+                    <span class="hljs-attr">&quot;ignoreFailures&quot;</span>: <span class="hljs-literal">true</span>
+                }
+            ],
+            <span class="hljs-attr">&quot;preLaunchTask&quot;</span>: <span class="hljs-string">&quot;g++ build active file&quot;</span> <span class="hljs-comment">// tasks.json 的任务</span>
+        }
+    ]
+}
+</div></code></pre>
+<h2 id="预定义变量及其解释">预定义变量及其解释</h2>
+<p><code>${workspaceFolder}</code> : 表示当前workspace文件夹路径，如<code>C:\Users\admin\Desktop\test</code></p>
+<p><code>${workspaceRootFolderName}</code> : 表示 workspace 的文件夹名，如test</p>
+<p><code>${file}</code> : 文件自身的绝对路径，如<code>C:\Users\admin\Desktop\test\.vscode\launch.json</code></p>
+<p><code>${relativeFile}</code> : 文件在workspace中的路径，如<code>.vscode\launch.json</code></p>
+<p><code>${fileBasenameNoExtension}</code> : 当前文件的文件名，不带后缀，如<code>hello/launch</code></p>
+<p><code>${fileBasename}</code> : 当前文件的文件名，如 <code>hello.cpp/launch.json</code>等</p>
+<p><code>${fileDirname}</code> : 文件所在的文件夹路径，也即<code>C:\Users\admin\Desktop\test\.vscode</code></p>
+<p><code>${fileExtname}</code> : 当前文件的后缀，也即<code>.json</code></p>
+<p><code>${lineNumber}</code> : 当前文件光标所在的行号</p>
+<p><code>${env:PATH}</code> : 系统中的环境变量</p>
+<h2 id="文件结构">文件结构</h2>
+<pre><code><code><div>cpp-configure-demo
+├─ .vscode
+│  ├─ launch.json
+│  └─ tasks.json
+├─ main.cpp
+├─ main.exe
+└─ README.md
+</div></code></code></pre>
+
+    </body>
+    </html>
